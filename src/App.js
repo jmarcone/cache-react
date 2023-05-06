@@ -19,9 +19,12 @@ function App() {
     e.preventDefault();
     setLoading(true);
 
-    const { data } = await axios.post("http://localhost:8000/remote-cache", {
-      "remoteUrl": remoteUrlRef.current.value,
-      "cacheKey": cacheKeyRef.current.value,
+    const { data } = await axios.get("http://localhost:8000/remote-cache", {
+      params:
+      {
+        "remoteUrl": remoteUrlRef.current.value,
+        "cacheKey": cacheKeyRef.current.value
+      }
     })
     setLoading(false);
     setResult(data);
@@ -38,19 +41,19 @@ function App() {
         <input type="text" name="cacheKey" ref={cacheKeyRef} />
         <button type='submit' >Send</button>
       </form>
-        {
-          loading && "Loading....."
-        }
-        {
+      {
+        loading && "Loading....."
+      }
+      {
 
-          !loading && result && result.map((item, index) => (
-            <pre key={index}>
-              <code>{JSON.stringify(item, "", 2)}</code>
-            </pre>
-          ))
+        !loading && result && result.map((item, index) => (
+          <pre key={index}>
+            <code>{JSON.stringify(item, "", 2)}</code>
+          </pre>
+        ))
 
-        }
-      
+      }
+
     </div>
   );
 }
