@@ -6,6 +6,7 @@ import axios from 'axios';
 function App() {
   const remoteUrlRef = useRef();
   const cacheKeyRef = useRef();
+  const methodRef = useRef();
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -19,15 +20,22 @@ function App() {
     e.preventDefault();
     setLoading(true);
 
-    const { data } = await axios.get("http://localhost:8000/remote-cache", {
-      params:
-      {
-        "remoteUrl": remoteUrlRef.current.value,
-        "cacheKey": cacheKeyRef.current.value
+    let params = {
+      "remoteUrl": remoteUrlRef.current.value,
+      "cacheKey": cacheKeyRef.current.value
+
+    }
+
+    if (methodRef.current.value === "get") {
+      params = {
+        params: params
       }
-    })
-    setLoading(false);
+    }
+
+
+    let { data } = await axios[methodRef.current.value]("http://localhost:8000/remote-cache", params)
     setResult(data);
+    setLoading(false);
   }
 
   return (
@@ -40,6 +48,12 @@ function App() {
         Cache Key
         <input type="text" name="cacheKey" ref={cacheKeyRef} />
         <button type='submit' >Send</button>
+        <br />
+        Method
+        <select ref={methodRef} name='method'>
+          <option value="get">Get</option>
+          <option value="post">Post</option>
+        </select>
       </form>
       {
         loading && "Loading....."
